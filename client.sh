@@ -56,8 +56,7 @@ function _ask_onion {
 
 source ./util.sh
 
-_chec
-k_deps
+_check_deps
 _boostrap
 key=$(_create_keys "$CLIENT_FOLDER")
 _print_key "$key"
