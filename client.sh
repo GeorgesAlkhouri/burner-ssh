@@ -3,15 +3,8 @@ set -ue
 
 function _check_deps {
     tor -h >/dev/null || _err_exit "Couldnt' detect tor" _burn
-    sshd --help 2>&1 | grep -qs OpenSSH || _err_exit "Couldn't detect OpenSSH daemon" _burn
 }
 
-function _random_name {
-    # print 16 - 32bit random string
-    local name
-    name=$(python -c "import secrets; print(secrets.token_hex(16 + secrets.randbelow(17)))")
-    echo "$name"
-}
 
 function _boostrap {
     _log_cmd mkdir -p "$APP_FOLDER"

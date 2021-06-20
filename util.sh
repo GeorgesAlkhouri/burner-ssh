@@ -9,10 +9,21 @@ SERVER_FOLDER=$APP_FOLDER/server
 function _create_keys {
     # Generate ED25519 key pair to folder
     # $1 - Path to folder
+
     #TODO dont safe if folder is not empty
     local name
     name=$(_random_name)
     ssh-keygen -N "" -C "" -t ed25519 -f "$1/$name" >&2
+    echo "$name"
+}
+
+
+function _random_name {
+    # print 16 - 32bit random string
+
+    # TODO error handling
+    local name
+    name=$(python -c "import secrets; print(secrets.token_hex(16 + secrets.randbelow(17)))")
     echo "$name"
 }
 
