@@ -1,3 +1,10 @@
+.PHONY: dev build
 
 dev:
-	docker run -it -v $(PWD):/shared ubuntu bash
+	docker run --rm -it -v $(PWD):/shared onionssh bash
+
+
+build:
+	docker build -t onionssh -f ./dev/Dockerfile .
+
+

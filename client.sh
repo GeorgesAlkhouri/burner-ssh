@@ -3,6 +3,7 @@ set -ue
 
 function _check_deps {
     tor -h >/dev/null || _err_exit "Couldnt' detect tor" _burn
+    python3 --version > /dev/null || _err_exit "Python3 not found" _burn
 }
 
 

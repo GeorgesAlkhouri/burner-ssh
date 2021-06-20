@@ -23,7 +23,7 @@ function _random_name {
 
     # TODO error handling
     local name
-    name=$(python -c "import secrets; print(secrets.token_hex(16 + secrets.randbelow(17)))")
+    name=$(python3 -c "import secrets; print(secrets.token_hex(16 + secrets.randbelow(17)))")
     echo "$name"
 }
 
