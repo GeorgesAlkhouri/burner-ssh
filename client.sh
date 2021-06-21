@@ -16,8 +16,8 @@ function _boostrap {
 function _print_key {
     local key
     key=$(cat "$CLIENT_FOLDER/$1.pub") || _err_exit "Something went wrong no public key" _burn
-    printf "Content of your Public Key File\n\n%s\n\n" \
-           "Give this Key (over a secure channel) to your Server\n" \
+    printf "Content of your Public Key File\n\n%s\n\n"\
+           "Give this Key (over a secure channel) to your Server\n"\
            "and wait for onion service address." "$key"
 }
 
@@ -54,7 +54,7 @@ _check_deps
 _boostrap
 key=$(_create_keys "$CLIENT_FOLDER")
 _print_key "$key"
-# _ask_connect
+ _ask_connect
 address=$(_ask_onion)
 _connect "$key" "$address"
 
