@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Callable, Dict, Optional
 
 from onionssh.cmd import run
 
@@ -9,15 +9,31 @@ class CommandMixin:
 
 
 class TorMixin(CommandMixin):
-    # TODO config
     def build_cmd(self, config: Optional[Dict[str, str]] = None) -> str:
         if not config:
-            ...
+            config = self.get_config("TOR")
         cmd = "tor"
         for key, value in config.items():
             cmd = cmd + f' --{key} "{value}"'
 
         return cmd
 
-    def execute(self):
-        ...
+    def execute(self, run_func: Callable = run, **kwargs):
+        cmd = self.build_cmd()
+
+        def _on_exit(returncode, stderr):
+            if not self.__thread.is_stopped():
+                raise RuntimeError(
+                    f"Tor stopped unintentionally with {returncode} and message: '{stderr}'"
+                )
+
+        def _on_output(msg):
+            assert self.__thread
+            self.outputs[self.__thread.name].append(msg)
+
+        thread = run_func(cmd, on_exit=_on_exit, output=_on_output, **kwargs)
+        assert (
+            thread.name not in self.threads
+        ), f"Thread ID {thread.name} already exists"
+        self.threads[thread.name] = thread
+        self.__thread = thread
