@@ -18,17 +18,10 @@ def _run(
     # process
 
     thread = cast(Thread, threading.currentThread())
-    try:
-        proc = subprocess.Popen(
-            _cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
-        )
-    except FileNotFoundError as _e:
-        if _on_exit:
-            _on_exit(1, str(_e))
-        else:
-            # raise error when no on_exit callback is given
-            raise _e
-        return
+
+    proc = subprocess.Popen(
+        _cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+    )
 
     while proc.poll() is None:
         if thread.is_stopped():
@@ -78,7 +71,7 @@ class Thread(StoppableMixin, PyThread):
             self._cmd_kwargs = {}
         self._on_exit = on_exit
         self._on_output = on_output
-        self._exc: Optional[Exception] = None
+        self._exc: Optional[BaseException] = None
 
     def join(self, timeout: Optional[float] = None) -> None:
         threading.Thread.join(self, timeout)
@@ -93,4 +86,7 @@ class Thread(StoppableMixin, PyThread):
         if shell:
             _cmd = self._cmd
 
-        _run(_cmd, self._on_exit, self._on_output, self._cmd_kwargs)
+        try:
+            _run(_cmd, self._on_exit, self._on_output, self._cmd_kwargs)
+        except BaseException as exc:
+            self._exc = exc

@@ -30,13 +30,36 @@ def test_run_output(output, cmd, kwargs):
 
 
 @pytest.mark.parametrize(
+    ("exce", "cmd", "kwargs"),
+    [
+        # catched FileNotFoundError return code
+        (FileNotFoundError, "does-not-exist", {}),
+    ],
+)
+def test_run_exception(exce, cmd, kwargs):
+
+    _res = None
+
+    def _on_exit(_, __):
+        nonlocal _res
+        _res = False
+
+    with pytest.raises(exce):
+        thread = run(cmd, on_exit=_on_exit, **kwargs)
+        time.sleep(1)
+        thread.join()
+
+    assert _res is None
+
+
+@pytest.mark.parametrize(
     ("result", "cmd", "kwargs"),
     [
         (1, "exit 1", {"shell": True}),
         (0, "ls", {}),
-        # catched FileNotFoundError return code
-        (1, "does-not-exist", {}),
         # shell return code for command not found
+        # this will not raise an exception from
+        # Popen
         (127, "does-not-exist", {"shell": True}),
     ],
 )
