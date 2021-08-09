@@ -1,8 +1,5 @@
-import shlex
-import subprocess
-import threading
 from shutil import which
-from typing import Callable, Optional, Union, cast
+from typing import Callable, Optional, Union
 
 from .thread import Thread
 

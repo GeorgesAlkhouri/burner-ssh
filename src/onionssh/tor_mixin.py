@@ -22,18 +22,18 @@ class TorMixin(CommandMixin):
         cmd = self.build_cmd()
 
         def _on_exit(returncode, stderr):
-            if not self.__thread.is_stopped():
+            if not self._tor_thread.is_stopped():
                 raise RuntimeError(
                     f"Tor stopped unintentionally with {returncode} and message: '{stderr}'"
                 )
 
         def _on_output(msg):
-            assert self.__thread
-            self.outputs[self.__thread.name].append(msg)
+            assert self._tor_thread
+            self.outputs[self._tor_thread.name].append(msg)
 
         thread = run_func(cmd, on_exit=_on_exit, output=_on_output, **kwargs)
         assert (
             thread.name not in self.threads
         ), f"Thread ID {thread.name} already exists"
         self.threads[thread.name] = thread
-        self.__thread = thread
+        self._tor_thread = thread
