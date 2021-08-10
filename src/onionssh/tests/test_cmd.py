@@ -1,6 +1,7 @@
 import time
 
 import pytest
+from onionssh.thread import Thread
 
 from ..cmd import is_installed, run
 
@@ -20,7 +21,7 @@ def test_run_output(output, cmd, kwargs):
 
     def _output(msg):
         nonlocal _res
-        _res.append(msg.decode().strip())
+        _res.extend(msg)
 
     thread = run(cmd, output=_output, **kwargs)
     time.sleep(1)
@@ -98,3 +99,8 @@ def test_run_kill():
     assert _res
     # < 0 means killed by signal -N
     assert _res < 0
+
+
+def test_run_raise_shell_daemon():
+    with pytest.raises(RuntimeError):
+        run("echo 2", thread_kwargs={"daemon": True}, shell=True)

@@ -6,40 +6,60 @@ from threading import Thread as PyThread
 from typing import Callable, Dict, Optional, Union, cast
 
 
+def _format_output(output):
+    _out = []
+    if isinstance(output, str):
+        _out = output.split("\n")
+
+    if isinstance(output, bytes):
+        _out = output.decode().split("\n")
+
+    return [_o for _o in _out if _o]
+
+
+def _get_output(_proc, _thread, _on_output, timeout=0.1, format_output=_format_output):
+    if _thread.is_stopped():
+        _proc.terminate()
+        return "", ""
+    stdout, stderr = "", ""
+    try:
+        stdout, stderr = _proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        _get_output(_proc, _thread, _on_output, timeout, format_output)
+
+    if stdout and _on_output:
+        _on_output(format_output(stdout))
+    return stdout, stderr
+
+
 def _run(
     _cmd,
-    _on_exit: Optional[Callable[[int, Optional[str]], None]],
-    _output: Optional[Callable[[Union[str, bytes]], None]],
+    on_exit: Optional[Callable[[int, Optional[str]], None]],
+    on_output: Optional[Callable[[Union[str, bytes]], None]],
     kwargs,
+    format_output=_format_output,
 ):
-    # _cmd, _on_exit, _output = dill.loads(pickled)
     # Set shell=False to be able to terminate the started thread
     # and not just the shell process without the spawned child
     # process
 
     thread = cast(Thread, threading.currentThread())
-
     proc = subprocess.Popen(
         _cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
     )
 
-    while proc.poll() is None:
-        if thread.is_stopped():
-            proc.terminate()
-            break
-        line = proc.stdout.readline()
-        if line and _output:
-            _output(line)
+    if on_output:
+        _get_output(proc, thread, on_output)
 
     if thread.is_stopped():
         proc.terminate()
 
     # get return code and remaining output of process
     stdout, stderr = proc.communicate()
-    if _output and stdout:
-        _output(stdout)
-    if _on_exit:
-        _on_exit(proc.returncode, stderr)
+    if on_output and stdout:
+        on_output(format_output(on_output))
+    if on_exit:
+        on_exit(proc.returncode, stderr)
 
 
 class StoppableMixin:
