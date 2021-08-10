@@ -1,0 +1,10 @@
+-c prod.txt
+
+flake8
+black
+mypy
+psutil
+pytest
+isort
+pre-commit
+

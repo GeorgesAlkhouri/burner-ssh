@@ -1,7 +1,6 @@
 import time
 
 import pytest
-from onionssh.thread import Thread
 
 from ..cmd import is_installed, run
 

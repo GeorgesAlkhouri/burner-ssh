@@ -62,19 +62,7 @@ def _run(
         on_exit(proc.returncode, stderr)
 
 
-class StoppableMixin:
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self._stop_event = Event()
-
-    def stop(self):
-        self._stop_event.set()
-
-    def is_stopped(self) -> bool:
-        return self._stop_event.is_set()
-
-
-class Thread(StoppableMixin, PyThread):
+class Thread(PyThread):
     def __init__(
         self,
         cmd: str,
@@ -85,6 +73,7 @@ class Thread(StoppableMixin, PyThread):
         **kwargs
     ) -> None:
         super().__init__(*args, **kwargs)
+        self._stop_event = Event()
         self._cmd = cmd
         self._cmd_kwargs = cmd_kwargs
         if not self._cmd_kwargs:
@@ -92,6 +81,12 @@ class Thread(StoppableMixin, PyThread):
         self._on_exit = on_exit
         self._on_output = on_output
         self._exc: Optional[BaseException] = None
+
+    def stop(self):
+        self._stop_event.set()
+
+    def is_stopped(self) -> bool:
+        return self._stop_event.is_set()
 
     def join(self, timeout: Optional[float] = None) -> None:
         threading.Thread.join(self, timeout)

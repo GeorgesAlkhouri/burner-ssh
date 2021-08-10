@@ -2,9 +2,9 @@ import time
 from collections import defaultdict
 
 import psutil
+
 from onionssh.config import get_tor_config, set_tor_config_value
 
-from ..thread import Thread
 from ..tor_mixin import TorMixin
 
 
@@ -17,9 +17,9 @@ def test_tor_cmd():
         "ExitPolicy": "reject *:*",
     }
     cmd = TorMixin().build_cmd(config=config)
-    assert (
-        cmd
-        == 'tor --SOCKSPort "0" --HiddenServiceDir "test" --HiddenServicePort "80 127.0.0.1:80" --ExitPolicy "reject *:*"'
+    assert cmd == (
+        'tor --SOCKSPort "0" --HiddenServiceDir "test" '
+        '--HiddenServicePort "80 127.0.0.1:80" --ExitPolicy "reject *:*"'
     )
 
 
@@ -44,9 +44,9 @@ def test_tor_mixin_build_cmd():
     setattr(mock, "get_config", _mock_config)
 
     cmd = mock.build_cmd()
-    assert (
-        cmd
-        == 'tor --SOCKSPort "0" --ExitPolicy "reject *:*" --HiddenServiceDir "test2" --HiddenServicePort "80 0.0.0.0:80"'
+    assert cmd == (
+        'tor --SOCKSPort "0" --ExitPolicy "reject *:*" '
+        '--HiddenServiceDir "test2" --HiddenServicePort "80 0.0.0.0:80"'
     )
 
 

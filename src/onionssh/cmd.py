@@ -23,7 +23,9 @@ def run(
 
     if shell and daemon:
         raise RuntimeError(
-            "Can not run thread in daemon mode when running command with shell=True. Only shell process will be terminated if root thread is killed but not spawned children from shell (like tor)."
+            "Can not run thread in daemon mode when running command with "
+            "shell=True. Only shell process will be terminated if root "
+            "thread is killed but not spawned children from shell (like tor)."
         )
 
     thread = Thread(

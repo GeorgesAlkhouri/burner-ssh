@@ -1,3 +1,4 @@
+# type: ignore
 from typing import Callable, Dict, Optional
 
 from onionssh.cmd import run
@@ -24,7 +25,8 @@ class TorMixin(CommandMixin):
         def _on_exit(returncode, stderr):
             if not self._tor_thread.is_stopped():
                 raise RuntimeError(
-                    f"Tor stopped unintentionally with {returncode} and message: '{stderr}'"
+                    f"Tor stopped unintentionally with {returncode} and "
+                    f"message: '{stderr}'"
                 )
 
         def _on_output(msg):
