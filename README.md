@@ -1,6 +1,4 @@
-# Burner-SSH
-
-**Project in the making/POC**
+# Burner-SSH (Project in the making/POC)
 
 Key-point is to create an anonymous SSH connection to a server (through the Tor network) and burn (e.g. key-pairs) everything after you finished.
 
