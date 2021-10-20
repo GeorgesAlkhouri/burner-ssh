@@ -1,9 +1,38 @@
-# onion-ssh
+# Burner-SSH
 
-**Project in the making**
+**Project in the making/POC**
 
-Key-point is to create an anonymous admin SSH connection to a server (through the Tor network) every time you want to connect.
-1. Create an onion service (DONE) with a custom bootstrapped SSH server behind it.
-2. Connect to the server with one-time keys from an SSH client and burn every down when closing the connection.
+Key-point is to create an anonymous SSH connection to a server (through the Tor network) and burn (e.g. key-pairs) everything after you finished.
 
+## Concept
 
+![Burner-SSH concept](docs/BurnerSSH.png)
+
+## Usage
+
+### Development
+
+Setup pre-commit after you checked out the repo with `pre-commit install`.
+
+Build and bootstrap a fresh operation system with Docker to not be in conflict with 
+your system's SSH setup.
+
+```shell
+make build
+make dev
+```
+
+### Compile python requirements
+
+To have a pleasant experience with your package dependencies let `pip-tools` manage them.
+
+```shell
+make compile
+make sync
+```
+
+### Tests
+
+```shell
+make test
+```

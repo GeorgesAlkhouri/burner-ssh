@@ -2,9 +2,13 @@
 
 flake8
 black
+pylint
 mypy
 psutil
 pytest
 isort
 pre-commit
+pip-tools
+epc
+importmagic
 

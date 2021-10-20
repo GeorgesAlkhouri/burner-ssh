@@ -15,3 +15,6 @@ sync:
 
 re-compile: compile sync
 
+test:
+	pytest
+
