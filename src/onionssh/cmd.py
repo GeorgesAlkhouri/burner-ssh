@@ -1,3 +1,6 @@
+"""Module for interacting with the command line or
+containing tools to run commands on other threads."""
+
 from shutil import which
 from typing import Callable, Dict, Optional, Union
 
@@ -5,6 +8,7 @@ from .thread import Thread
 
 
 def is_installed(name: str) -> bool:
+    """Return true if name is in PATH"""
     return which(name) is not None
 
 

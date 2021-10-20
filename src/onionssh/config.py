@@ -1,3 +1,4 @@
+""""Module for providing a configuration"""
 from collections import OrderedDict
 from typing import Dict
 
